@@ -1,12 +1,15 @@
 * {
-	margin: 0px;
-	padding: 0px;
+	margin: 0;
+	padding: 0;
 	background-color: cornflowerblue;
 	color: yellow;
+	box-sizing: border-box; /* Ensures consistent width/height calculations */
 }
 
 .maincontent {
 	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 .header {
@@ -20,4 +23,52 @@
 .cardsDiv {
 	border: 0.5px solid yellow;
 	height: 90%;
+	padding: 10px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr); /* 4 cards per row */
+	gap: 10px; /* Space between the cards */
+	overflow: auto; /* Allows scrolling if content exceeds height */
+	align-items: center;
+	justify-items: center;
+}
+
+/* Remove default list styles from ul and li */
+.cardsDiv ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: contents; /* Prevents the <ul> from interfering with the grid */
+}
+
+.cardsDiv li {
+	display: contents; /* Prevents the <li> from affecting the layout */
+}
+
+.card {
+	height: 200px;
+	width: 150px;
+	background-color: #333; /* Dark background for contrast */
+	border: 1px solid yellow;
+	border-radius: 8px; /* Rounded edges */
+	display: flex;
+	flex-direction: column;
+	overflow: hidden; /* Prevents content overflow */
+	text-align: center;
+}
+
+.picture {
+	height: 75%;
+	width: 100%;
+	background-color: gray; /* Placeholder color */
+}
+
+.name {
+	height: 25%;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 1rem;
+	font-weight: bold;
+	background-color: #222;
 }

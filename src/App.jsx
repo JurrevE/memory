@@ -3,44 +3,72 @@ import "./App.css";
 
 function App() {
 	const [pokemon, setPokemon] = useState([]);
+	const [currentScore, setCurrentScore] = useState(0);
+	const [highScore, setHighScore] = useState(0);
 
-	// Function to fetch data
+	// Fetch Pokémon data
 	function getData() {
-		fetch("https://pokeapi.co/api/v2/pokemon/?limit=11&offset=900")
+		fetch("https://pokeapi.co/api/v2/pokemon/?limit=12&offset=900")
 			.then((response) => {
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
 				}
-				// Parse the JSON data
 				return response.json();
 			})
 			.then((data) => {
-				console.log("Data received:", data.results);
-				setPokemon(data.results);
+				const gekozenPokemon = data.results;
+				console.log(gekozenPokemon);
+				console.log("Data received:", gekozenPokemon);
+				gekozenPokemon.forEach((pokemon, index) => {
+					pokemon.id = index;
+				});
+				console.log(
+					"nu hier de pokemons met specifieke index:",
+					gekozenPokemon
+				);
+
+				setPokemon(gekozenPokemon);
 			})
 			.catch((error) => {
 				console.error("There was a problem with the fetch operation:", error);
 			});
 	}
 
-	// Fetch data on component mount
+	// Shuffle Pokémon cards
+	function shuffleCards(index) {
+		console.log("Shuffling cards...");
+		const shuffledCards = [...pokemon].sort(() => Math.random() - 0.5); // Shuffle the array
+		setPokemon(shuffledCards); // Update the state with the shuffled cards
+		console.log(index);
+	}
+
 	useEffect(() => {
 		getData();
 	}, []);
 
-	// Log updated pokemon state
 	useEffect(() => {
-		console.log("Pokemon state updated:", pokemon);
+		console.log("Updated Pokémon array:", pokemon);
 	}, [pokemon]);
 
 	return (
 		<div className="maincontent">
 			<div className="header">
-				<h1 className="currentScore">Current score: </h1>
-				<h1>Pokemon memory game</h1>
-				<h1 className="highScore">High score:</h1>
+				<h1 className="currentScore">Current score: {currentScore}</h1>
+				<h1>Pokemon Memory Game</h1>
+				<h1 className="highScore">High score: {highScore}</h1>
 			</div>
-			<div className="cardsDiv"></div>
+			<div className="cardsDiv">
+				<ul>
+					{pokemon.map((poke, index) => (
+						<li key={index}>
+							<div className="card" onClick={() => shuffleCards(index)}>
+								<div className="picture"></div>
+								<div className="name">{poke.name}</div>
+							</div>
+						</li>
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 }
