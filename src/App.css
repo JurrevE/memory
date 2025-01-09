@@ -1,0 +1,23 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	background-color: cornflowerblue;
+	color: yellow;
+}
+
+.maincontent {
+	height: 100vh;
+}
+
+.header {
+	border: 0.5px solid yellow;
+	height: 10%;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.cardsDiv {
+	border: 0.5px solid yellow;
+	height: 90%;
+}
