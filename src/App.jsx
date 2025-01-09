@@ -3,6 +3,8 @@ import "./App.css";
 
 function App() {
 	const [pokemon, setPokemon] = useState([]);
+	const [clickedIds, setClickedIds] = useState([]);
+
 	const [currentScore, setCurrentScore] = useState(0);
 	const [highScore, setHighScore] = useState(0);
 
@@ -16,18 +18,12 @@ function App() {
 				return response.json();
 			})
 			.then((data) => {
-				const gekozenPokemon = data.results;
-				console.log(gekozenPokemon);
-				console.log("Data received:", gekozenPokemon);
-				gekozenPokemon.forEach((pokemon, index) => {
-					pokemon.id = index;
+				const fetchedPokemon = data.results;
+				console.log("Data received:", fetchedPokemon);
+				fetchedPokemon.forEach((pokemon, index) => {
+					pokemon.id = index; // Assign unique IDs to each Pokémon
 				});
-				console.log(
-					"nu hier de pokemons met specifieke index:",
-					gekozenPokemon
-				);
-
-				setPokemon(gekozenPokemon);
+				setPokemon(fetchedPokemon);
 			})
 			.catch((error) => {
 				console.error("There was a problem with the fetch operation:", error);
@@ -35,11 +31,48 @@ function App() {
 	}
 
 	// Shuffle Pokémon cards
-	function shuffleCards(index) {
-		console.log("Shuffling cards...");
-		const shuffledCards = [...pokemon].sort(() => Math.random() - 0.5); // Shuffle the array
-		setPokemon(shuffledCards); // Update the state with the shuffled cards
-		console.log(index);
+	function randomizePokemon() {
+		setPokemon((prevPokemon) =>
+			[...prevPokemon].sort(() => Math.random() - 0.5)
+		);
+	}
+
+	// Function to handle card clicks
+	function addId(e) {
+		const id = e.target.dataset.id;
+		console.log("Clicked ID:", id);
+
+		if (!clickedIds.includes(id)) {
+			setClickedIds((prevItems) => [...prevItems, id]);
+			randomizePokemon(); // Shuffle the Pokémon cards
+
+			// Update current score and potentially high score
+			setCurrentScore((prevScore) => {
+				const newScore = prevScore + 1;
+
+				// Update high score if needed
+				setHighScore((prevHigh) => Math.max(prevHigh, newScore));
+
+				// Check for win condition
+				if (newScore === 12) {
+					alert("CONGRATS YOU ARE VERY SMART!!");
+					resetGame();
+				}
+
+				return newScore;
+			});
+		} else {
+			console.log("Wrong, stupid");
+			alert("Game Over! Try again.");
+			resetGame();
+		}
+	}
+
+	// Reset the game
+	function resetGame() {
+		setClickedIds([]);
+		setCurrentScore(0);
+		randomizePokemon();
 	}
 
 	useEffect(() => {
@@ -47,8 +80,8 @@ function App() {
 	}, []);
 
 	useEffect(() => {
-		console.log("Updated Pokémon array:", pokemon);
-	}, [pokemon]);
+		console.log("Current clicked IDs:", clickedIds);
+	}, [clickedIds]);
 
 	return (
 		<div className="maincontent">
@@ -61,9 +94,12 @@ function App() {
 				<ul>
 					{pokemon.map((poke, index) => (
 						<li key={index}>
-							<div className="card" onClick={() => shuffleCards(index)}>
-								<div className="picture"></div>
-								<div className="name">{poke.name}</div>
+							<div className="card" data-id={poke.id} onClick={(e) => addId(e)}>
+								<div className="picture" data-id={poke.id}></div>
+								<div className="name" data-id={poke.id}>
+									{poke.name}
+									{poke.id}
+								</div>
 							</div>
 						</li>
 					))}
